@@ -113,6 +113,21 @@ class Eventbrite_Event {
 	 */
 	public $format;  // format->name
 
+    /**
+     * The event's timezone
+     *
+     * @var string
+     */
+    public $timezone;
+
+
+    /**
+     * The event's capacity
+     *
+     * @var int
+     */
+    public $capacity;
+
 	/**
 	 * Retrieve Eventbrite_Event instance.
 	 *
@@ -139,6 +154,52 @@ class Eventbrite_Event {
 		// We've got an event, let's dress it up.
 		return new Eventbrite_Event( $event->events[0] );
 	}
+
+    /**
+     * create array to pass to EventBrite.
+     *
+     * @access public
+     *
+     * @return array.
+     */
+    public function createRequestFormat(){
+        if(!is_a($this->timezone, 'DateTimeZone')){
+            try{
+                $timezone = new DateTimeZone($this->timezone);
+            }catch(Exception $e){
+                $timezone = new DateTimeZone();
+            }
+        }
+        $startDate = new DateTime($this->start, $timezone);
+        $endDate = new DateTime($this->end, $timezone);
+        $format = 'Y-m-d\TH:i:s\Z';
+
+        $returnAray = [
+            'event.name.html'           => $this->post_title,
+            'event.description.html'    => $this->post_content,
+            'event.organizer_id'        => '',
+            'event.start.utc'           => gmdate($format,   $startDate->format('U')),
+            'event.start.timezone'      => $startDate->format('e'),
+            'event.end.utc'             => gmdate($format,   $endDate->format('U')),
+            'event.end.timezone'        => $endDate->format('e'),
+            'event.hide_start_date'     => false,
+            'event.hide_end_date'       => false,
+            'event.currency'            => 'USD',
+            'event.venue_id'            => '',
+            'event.online_event'        => false,
+            'event.listed'              => true,
+            'event.logo_id'             => '',
+            'event.category_id'         => '',
+            'event.subcategory_id'      => '',
+            'event.format_id'           => '',
+            'event.shareable'           => false,
+            'event.invite_only'         => false,
+            'event.password'            => '',
+            'event.capacity'            => $this->capacity,
+            'event.show_remaining'      => true,
+        ];
+        return $returnAray;
+    }
 
 	/**
 	 * Constructor.

@@ -336,6 +336,32 @@ class Eventbrite_Manager {
 					'created_desc',
 				),
 			),
+            'event_create' => [
+                'event.name.html'           => [],
+                'event.description.html'    => [],
+                'event.organizer_id'        => [],
+                'event.start.utc'           => [],
+                'start.utc'                 => [],
+                'event.start.timezone'      => [],
+                'event.end.utc'             => [],
+                'event.end.timezone'        => [],
+                'event.hide_start_date'     => [],
+                'event.hide_end_date'       => [],
+                'event.currency'            => [],
+                'event.venue_id'            => [],
+                'event.online_event'        => [],
+                'event.listed'              => [],
+                'event.logo_id'             => [],
+                'event.category_id'         => [],
+                'event.subcategory_id'      => [],
+                'event.format_id'           => [],
+                'event.shareable'           => [],
+                'event.invite_only'         => [],
+                'event.password'            => [],
+                'event.capacity'            => [],
+                'event.show_remaining'      => [],
+                'event.source'              => [],
+            ]
 		);
 
 		return $params;

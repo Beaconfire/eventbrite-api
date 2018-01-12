@@ -67,6 +67,14 @@ class Eventbrite_API extends Keyring_Service_Eventbrite {
 		$this->set_endpoint( 'user_owned_events', self::API_BASE . 'users/' . $this->eventbrite_external_id . '/owned_events', 'GET' );
 		$this->set_endpoint( 'event_details', self::API_BASE . 'events/', 'GET' );
 		$this->set_endpoint( 'event_search', self::API_BASE . 'events/search/', 'GET' );
+
+        $this->set_endpoint( 'event', self::API_BASE . 'events/:id/', 'GET' );
+        $this->set_endpoint( 'event_create', self::API_BASE . 'events/', 'POST' );
+        $this->set_endpoint( 'event_update', self::API_BASE . 'events/:id/', 'POST' );
+        $this->set_endpoint( 'ticket_class_create', self::API_BASE . 'events/:id/ticket_classes/', 'POST' );
+        $this->set_endpoint( 'ticket_class_update', self::API_BASE . 'events/:id/ticket_classes/:sub_id', 'POST' );
+        $this->set_endpoint( 'webhook_create', self::API_BASE . 'webhooks/', 'POST' );
+        $this->set_endpoint( 'event_publish', self::API_BASE . 'events/:id/publish/', 'POST' );
 	}
 
 	/**
@@ -79,19 +87,31 @@ class Eventbrite_API extends Keyring_Service_Eventbrite {
 	 * @param  integer $object_id Eventbrite event ID used when requesting a single event from the API.
 	 * @return object API response if successful, error (Keyring_Error or WP_Error) otherwise
 	 */
-	public static function call( $endpoint, $query_params = array(), $object_id = null ) {
+	public static function call( $endpoint, $query_params, $object_id = null, $subobject_id=null ) {
 		$token = self::$instance->get_token();
 		if ( empty( $token ) )
 			return new Keyring_Error( '400', 'No token present for the Eventbrite API.' );
+
+		if(is_object($query_params) && method_exists($query_params, 'createRequestFormat')){
+            $query_params = $query_params->createRequestFormat();
+        }else if(!is_array($query_params)){
+		    return new WP_Error('500', 'query_params needs to be either an array or instance of Eventbrite_Event');
+        }
 
 		$endpoint_url = trailingslashit( self::$instance->{$endpoint . '_url'} );
 		$query_params['expand'] = apply_filters( 'eventbrite_api_expansions', 'logo,organizer,venue,ticket_classes,format,category,subcategory', $endpoint, $query_params, $object_id );
 		$method = self::$instance->{$endpoint . '_method'};
 		$params = array( 'method' => $method );
 
-		if ( ! empty( $object_id ) && is_numeric( $object_id ) ) {
-			$endpoint_url = trailingslashit( $endpoint_url . absint( $object_id ) );
-		}
+		if ( ! empty( $object_id ) && is_numeric( $object_id ) && strpos( $endpoint_url , ':id') !== false ) {
+			$endpoint_url =  str_replace(':id', absint( $object_id ), $endpoint_url );
+		}else if( strpos( $endpoint_url , ':id') !== false && is_null($object_id)){
+            $endpoint_url =  str_replace(':id', '/', $endpoint_url );
+        }
+        if ( ! empty( $subobject_id ) && is_numeric( $subobject_id ) && strpos( $endpoint_url , ':sub_id') !== false ) {
+            $endpoint_url =  str_replace(':sub_id', absint( $subobject_id ), $endpoint_url );
+        }
+        $endpoint_url = trailingslashit($endpoint_url);
 
 		if ( 'GET' == $method ) {
 			$endpoint_url = add_query_arg( $query_params, $endpoint_url );

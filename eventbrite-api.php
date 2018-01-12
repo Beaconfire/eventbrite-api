@@ -2,11 +2,11 @@
 
 /*
 Plugin Name: Eventbrite API
-Plugin URI: https://github.com/Automattic/eventbrite-api
+Plugin URI: https://github.com/Beaconfire/eventbrite-api
 Description: A WordPress plugin that integrates the Eventbrite API with WordPress and Keyring.
-Version: 1.0.11
-Author: Automattic
-Author URI: http://automattic.com
+Version: 1.0.12
+Author: Beaconfire
+Author URI: http://beaconfire-red.com
 License: GPL v2 or newer <https://www.gnu.org/licenses/gpl.txt>
 */
 
@@ -50,6 +50,8 @@ function eventbrite_api_init() {
 		require_once( 'inc/class-eventbrite-query.php' );
 		require_once( 'inc/class-eventbrite-templates.php' );
 		require_once( 'inc/class-eventbrite-event.php' );
+        require_once( 'inc/class-eventbrite-ticket-class.php' );
+        require_once( 'inc/class-eventbrite-webhook.php' );
 		require_once( 'inc/functions.php' );
 	}
 }
