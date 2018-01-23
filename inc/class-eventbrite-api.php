@@ -74,6 +74,7 @@ class Eventbrite_API extends Keyring_Service_Eventbrite {
         $this->set_endpoint( 'ticket_class_create', self::API_BASE . 'events/:id/ticket_classes/', 'POST' );
         $this->set_endpoint( 'ticket_class_update', self::API_BASE . 'events/:id/ticket_classes/:sub_id', 'POST' );
         $this->set_endpoint( 'webhook_create', self::API_BASE . 'webhooks/', 'POST' );
+        $this->set_endpoint( 'webhook', self::API_BASE . 'webhooks/:id/', 'GET' );
         $this->set_endpoint( 'event_publish', self::API_BASE . 'events/:id/publish/', 'POST' );
 	}
 
